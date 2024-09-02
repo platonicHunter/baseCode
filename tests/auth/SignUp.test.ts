@@ -4,12 +4,14 @@ import { isValidEmail, isValidName, isValidPassword } from '../../src/controller
 import { userService } from '../../src/controllers/Auth/login';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { time } from 'console';
 
 describe('Signup Controller Integration Tests', () => {
 
   let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
+   
     mongoServer = await MongoMemoryServer.create();
     const uri = mongoServer.getUri();
 

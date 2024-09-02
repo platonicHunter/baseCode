@@ -15,9 +15,8 @@ jest.mock("../../src/controllers/Auth/login", () => ({
 
 // Define a custom type for Request with user property
 interface CustomRequest extends Request {
-  user?: { _id: Types.ObjectId }; // Use ObjectId type from mongoose
+  user?: { _id: Types.ObjectId };
 }
-
 describe("Logout Controller", () => {
   let req: Partial<CustomRequest>;
   let res: Partial<Response>;

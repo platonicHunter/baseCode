@@ -1,35 +1,39 @@
+// testSetup.ts
+import express from 'express';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { app } from '../src/server';
 
 let mongoServer: MongoMemoryServer;
+let server: any;
+const port = process.env.TEST_PORT || 3001; // Default to 3001 if TEST_PORT is not set
 
-beforeAll(async () => {
-  // Start a new in-memory MongoDB server
+export const startServer = async (): Promise<void> => {
   mongoServer = await MongoMemoryServer.create();
   const uri = mongoServer.getUri();
 
-  // If there's already a connection, disconnect it before connecting to the new URI
   if (mongoose.connection.readyState !== 0) {
     await mongoose.disconnect();
   }
 
-  // Connect to the new in-memory MongoDB server
   await mongoose.connect(uri);
 
-  console.log('Connected to new MongoDB instance for testing');
-});
+  server = app.listen(port, () => {
+    console.log(`Test server running on port ${port}`);
+  });
+};
 
-afterAll(async () => {
-  // Disconnect and stop the MongoDB server after all tests
+export const stopServer = async (): Promise<void> => {
+  if (server) {
+    server.close();
+  }
+
   await mongoose.disconnect();
   await mongoServer.stop();
-  console.log('Disconnected and stopped in-memory MongoDB');
-});
+};
 
-beforeEach(async () => {
-  // Clear the database before each test
+export const resetDatabase = async (): Promise<void> => {
   if (mongoose.connection.db) {
     await mongoose.connection.db.dropDatabase();
-    console.log('Dropped database before each test');
   }
-});
+};
