@@ -19,3 +19,5 @@ export class NotificationService {
     await this.notificationRepository.sendNotification(userId, message);
   }
 }
+
+export { INotificationInterface };

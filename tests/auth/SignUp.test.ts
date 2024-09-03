@@ -4,7 +4,6 @@ import { isValidEmail, isValidName, isValidPassword } from '../../src/controller
 import { userService } from '../../src/controllers/Auth/login';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { time } from 'console';
 
 describe('Signup Controller Integration Tests', () => {
 
@@ -14,12 +13,9 @@ describe('Signup Controller Integration Tests', () => {
    
     mongoServer = await MongoMemoryServer.create();
     const uri = mongoServer.getUri();
-
-    if (mongoose.connection.readyState !== 0) {
-      await mongoose.disconnect();
+    if (mongoose.connection.readyState === 0) {
+      await mongoose.connect(uri);
     }
-
-    await mongoose.connect(uri);
   });
 
   afterAll(async () => {
