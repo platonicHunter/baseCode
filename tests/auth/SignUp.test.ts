@@ -1,7 +1,7 @@
 import request from 'supertest';
-import { app } from '../../src/server';
+import { app } from '../../src/server'; // Import your Express app
 import { isValidEmail, isValidName, isValidPassword } from '../../src/controllers/Auth/sign-up';
-import { userService } from '../../src/controllers/Auth/login';
+import { userService } from '../../src/controllers/Auth/login'; // Import userService
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 
@@ -10,7 +10,6 @@ describe('Signup Controller Integration Tests', () => {
   let mongoServer: MongoMemoryServer;
 
   beforeAll(async () => {
-   
     mongoServer = await MongoMemoryServer.create();
     const uri = mongoServer.getUri();
     if (mongoose.connection.readyState === 0) {
@@ -58,7 +57,7 @@ describe('Signup Controller Integration Tests', () => {
   });
 
   it('should return 400 if any required input is missing', async () => {
-    let response = await request(app)
+    const response = await request(app)
       .post('/api/user/register')
       .send({
         email: 'test@example.com',
@@ -80,7 +79,7 @@ describe('Signup Controller Integration Tests', () => {
         password: 'Passw0rd!',
         confirmPassword: 'DifferentPassw0rd!',
       });
-      
+
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('status', 'FAILED');
     expect(response.body).toHaveProperty('message', 'Passwords do not match');
@@ -95,7 +94,7 @@ describe('Signup Controller Integration Tests', () => {
         password: 'Passw0rd!',
         confirmPassword: 'Passw0rd!',
       });
-      
+
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('status', 'FAILED');
     expect(response.body).toHaveProperty('message', 'Name is invalid or does not meet the required format. Required: at least 3 words');
@@ -112,8 +111,6 @@ describe('Signup Controller Integration Tests', () => {
       });
 
     expect(response.status).toBe(400);
-
-    // Check if the errors array is present in the response body
     expect(response.body).toHaveProperty('errors');
     expect(response.body.errors).toEqual(
       expect.arrayContaining([
@@ -126,7 +123,6 @@ describe('Signup Controller Integration Tests', () => {
       ])
     );
   });
-  
 
   it('should return 400 if the password does not meet the required format', async () => {
     const response = await request(app)
@@ -137,7 +133,7 @@ describe('Signup Controller Integration Tests', () => {
         password: 'Password',
         confirmPassword: 'Password',
       });
-      
+
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('status', 'FAILED');
     expect(response.body).toHaveProperty('message', 'Password must be at least 6 characters long, include at least one capital letter and one special character');
