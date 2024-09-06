@@ -74,6 +74,6 @@ describe("Token generation and renewal", () => {
     expect(response.status).toBe(403);
     expect(response.body).toStrictEqual({ message: "Invalid refresh token" });
   });
-  
+
  
 });

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { generateJwtToken, verifyJwtToken } from "../../src/config/token/token";
+import { generateAccessToken, generateJwtToken, generateRefreshToken, verifyJwtToken } from "../../src/config/token/token";
 import { JWT_SECRET } from "../../src/config";
 
 // Mock the JWT secret values
@@ -48,4 +48,6 @@ describe("JWT Token Generation and Validation", () => {
       "Invalid or expired data"
     );
   });
+
+  
 });

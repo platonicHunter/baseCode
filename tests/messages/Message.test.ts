@@ -117,14 +117,38 @@ describe('Message Controller Tests', () => {
       expect(response.body.message).toBe('Forbidden');
     });
 
+    it('should throw an error if senderId or receiverId is missing', async () => {
+      const invalidSendMessage = sendMessage();
+      const req: any = { body: { message: 'Hello' }, user: { _id: null }, params: { id: null } };
+      const res: any = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
+    
+      try {
+        await invalidSendMessage(req, res);
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          expect(error.message).toBe('Sender or receiver ID is missing');
+        } else {
+          throw new Error('Unexpected error type');
+        }
+      }
+    });
+    
+
+    
+
   })
  
 
   describe('getMessages', () => {
+
+    
     it('getMessages - success', async () => {
       const mockConversation = {
         messages: [{ _id: mockReceiverId.toHexString(), text: 'Hello' }],
-        populate: jest.fn().mockReturnThis() // Mock the populate method
+        populate: jest.fn().mockReturnThis() 
       };
     
       // Mock the service method
@@ -143,8 +167,8 @@ describe('Message Controller Tests', () => {
       expect(response.status).toBe(200);
       expect(response.body).toEqual(mockConversation.messages);
     });
-    
-    
+
+     
   
     it('getMessages - failure due to database error', async () => {
       MockMessageService.prototype.findConversation.mockRejectedValue(new Error('Database error'));
@@ -176,6 +200,20 @@ describe('Message Controller Tests', () => {
       expect(response.body.status).toBe('FAILED');
       expect(response.body.message).toBe('Forbidden');
     });
+
+    it('getMessages - no conversation found', async () => {
+      // Mock the service method to return null
+      MockMessageService.prototype.findConversation.mockResolvedValue(null as any);
+  
+      const response = await request(app)
+        .get(`/api/messages/${mockReceiverId}`)
+        .set('Authorization', `Bearer valid-token`);
+  
+      expect(response.status).toBe(200);
+      expect(response.body).toEqual([]);
+    });
   })
+
+  
  
 });

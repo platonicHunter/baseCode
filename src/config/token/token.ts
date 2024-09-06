@@ -5,6 +5,8 @@ export function generateJwtToken(userId: string) {
   if (!JWT_SECRET) {
     throw new Error("JWT_SECRET is not defined");
   }
+  console.log('JWT_SECRET:', JWT_SECRET); // Debugging line
+
   const payload = { id: userId };
   return jwt.sign(payload, JWT_SECRET, { expiresIn: "1hr" });
 }
